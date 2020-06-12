@@ -500,8 +500,8 @@ class DataFactory(object):
                             '       >= datetime("now", "-%s days", "localtime") ' \
                             '       AND session_history.media_type = "track" ' \
                             '   GROUP BY %s) AS t ' \
-                            'GROUP BY t.original_title, t.grandparent_title ' \
                             'WHERE t.d >= ((CASE WHEN t.duration IS NULL THEN 0 ELSE t.duration END) * %s /100 / 1000) ' \
+                            'GROUP BY t.grandparent_title ' \
                             'ORDER BY %s DESC, started DESC ' \
                             'LIMIT %s ' % (time_range, group_by, music_watched_percent, sort_type, stats_count)
                     result = monitor_db.select(query)
@@ -510,7 +510,7 @@ class DataFactory(object):
                     return None
 
                 for item in result:
-                    row = {'title': item['original_title'] or item['grandparent_title'],
+                    row = {'title': item['grandparent_title'] or item['original_title'],
                            'total_plays': item['total_plays'],
                            'total_duration': item['total_duration'],
                            'users_watched': '',
@@ -552,8 +552,8 @@ class DataFactory(object):
                             '       >= datetime("now", "-%s days", "localtime") ' \
                             '       AND session_history.media_type = "track" ' \
                             '   GROUP BY %s) AS t ' \
-                            'GROUP BY t.original_title, t.grandparent_title ' \
                             'WHERE t.d >= ((CASE WHEN t.duration IS NULL THEN 0 ELSE t.duration END) * %s /100 / 1000) ' \
+                            'GROUP BY t.grandparent_title ' \
                             'ORDER BY users_watched DESC, %s DESC, started DESC ' \
                             'LIMIT %s ' % (time_range, group_by, music_watched_percent, sort_type, stats_count)
                     result = monitor_db.select(query)
@@ -562,7 +562,7 @@ class DataFactory(object):
                     return None
 
                 for item in result:
-                    row = {'title': item['original_title'] or item['grandparent_title'],
+                    row = {'title': item['grandparent_title'] or item['original_title'],
                            'users_watched': item['users_watched'],
                            'rating_key': item['grandparent_rating_key'],
                            'last_play': item['last_watch'],
