@@ -991,7 +991,20 @@ def build_server_notify_params(notify_action=None, **kwargs):
     return available_params
 
 
+def get_tg_user(user):
+  try:
+    tg_users = json.loads(open("tg_users.json", "r").read())
+    tg_user = tg_users[user]
+    user = "<a href='tg://user?id={tg_user}'>{user}</a>".format(**{'user': user, 'tg_user': tg_user}) if tg_user else user
+  except:
+    pass
+  
+  return user
+
+
 def build_notify_text(subject='', body='', notify_action=None, parameters=None, agent_id=None, test=False):
+    parameters['user_tg'] = get_tg_user(parameters['user'])
+    
     # Default subject and body text
     if agent_id == 15:
         default_subject = default_body = ''
